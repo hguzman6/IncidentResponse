@@ -1,12 +1,12 @@
 # Incident Response Project
 
-This project is designed to provide incident response reports using data from VirusTotal. It has two versions: Dev and Prodocution.
+This project is designed to provide incident response reports using data from VirusTotal. Please use the Production version.
 
 ## Usage
 
-### Dev Version
+### Development Version
 
-The development version of the Incident Response Report Tool is located in the `Dev` directory.
+The development version of the Incident Response Report Tool is located in the `Development` directory. It is only to be used as a way to see the different versions of the script created, test scripts, etc. 
 
 #### Prerequisites
 
