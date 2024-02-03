@@ -32,8 +32,3 @@ The production version of the Incident Response Report Tool is located in the `P
 Ensure that the following environment variables are set:
 
 - `VIRUSTOTAL_API_KEY`: Your VirusTotal API key.
-
-
-## License
-
-
