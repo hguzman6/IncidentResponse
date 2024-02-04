@@ -12,6 +12,7 @@ The development version of the Incident Response Report Tool is located in the `
 
 - Python 3.x
 - Required Python packages (install using `pip install -r requirements.txt`)
+- requirements.txt is located in the `Config` directory
 
 ### Production Version
 
