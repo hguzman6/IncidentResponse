@@ -97,12 +97,13 @@ def generate_incident_report(affected_user, affected_host_ip, sanitized_threat_a
     report += f"            VirusTotal Message: {verbose_message}\n\n"
 
     # Malicious File Details
-    report += f"        Malicious File Details:\n"
-    report += f"            Malicious File Hash: {hash_value}\n"
-    report += f"            Malicious File Name: {file_name}\n"
-    report += f"            Malicious File Detection Date: {detection_date}\n"
-    report += f"            Total Positive Malicious Hits: {positive_hash_hits} out of {total_hash_hits}\n\n"
-    
+    report += f"        File Details:\n"
+    report += f"            File Hash: {hash_value}\n"
+    report += f"            File Name: {file_name}\n"
+    report += f"            File Detection Date: {detection_date}\n"
+    report += f"        Threat credibility:\n" 
+    report += f"            The OSINT investigation found that {positive_hash_hits} out of {total_hash_hits}\n"
+    report += f"            security vendors flag this file hash as malicious.\n\n"
 
     # Remediation Actions
     report += "     Remediation Actions:\n"
@@ -134,7 +135,7 @@ def generate_incident_report(affected_user, affected_host_ip, sanitized_threat_a
 def incident_response_workflow():
     while True:
         affected_user = input("Affected User Name: ")
-        affected_hostname = input("Affected Hostname: ")
+        affected_hostname = input("Affected Host Name: ")
         affected_host_ip = input("Affected Host IP: ")
         threat_actor_ip = input("Threat Actor IP: ")
         hash_value = input("File Hash Value: ")
