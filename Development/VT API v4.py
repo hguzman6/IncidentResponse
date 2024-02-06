@@ -141,7 +141,7 @@ def incident_response_workflow():
     threat_actor_ip = input("Threat Actor IP: ")
     hash_value = input("Hash Value (provide a valid hash for testing, or press Enter to skip): ")
 
-    # Query VirusTotal for IP and hash if provided
+    # Query VirusTotal for IP and/or hash, if provided
     ip_results = query_virustotal_ip(threat_actor_ip, virustotal_api_key) if threat_actor_ip else {}
     hash_results = query_virustotal_hash(hash_value, virustotal_api_key) if hash_value else {}
 
