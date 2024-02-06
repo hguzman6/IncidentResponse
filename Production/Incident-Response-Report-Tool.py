@@ -30,7 +30,7 @@ def validate_ip(ip):
 # Welcome banner
 def display_welcome_banner():
     print("""
-*********************************************
+**********************************************
 *         Incident Response App              *
 *                                            *
 *   Welcome to the first iteration!          *
@@ -44,7 +44,9 @@ def display_welcome_banner():
 *         Ready to respond effectively?      *
 *                                            *
 *         Created by: Hugo Guzman            *
-*********************************************
+*         Powered by: VirusTotal API         *
+*         Assisted by: ChatGPT               *
+**********************************************
 """)
 # Function to query VirusTotal for IP information
 def query_virustotal_ip(query_value, virustotal_api_key):
@@ -88,15 +90,22 @@ def query_virustotal(query_value=None, query_type=None, virustotal_api_key=None)
 
 # Function to generate an incident response report
 def generate_incident_report(affected_user, affected_host_ip, sanitized_threat_actor_ip, hash_value, vt_ip_results, vt_hash_results, affected_hostname):
+    
     report = "\nIncident Response (IR) Report\n\n"
 
     # Affected User
     report += f"    Victim Information:\n"
     report += f"        User Name: {affected_user}\n"
-    report += f"        User IP: {affected_host_ip}\n"
-    report += f"        Host Name: {affected_hostname}\n\n"
+    report += f"        Host Name: {affected_hostname}\n"
+    report += f"        Host IP: {affected_host_ip}\n\n"
+    
 
-    # Threat Actor Details (if IP is provided)
+    report += "     Security Incident Details\n\n"
+    
+    # Initialize to 0 in the event no IP address value is place or results are actually 0
+    positive_ip_hits = 0
+    total_ip_hits = 0
+
     if vt_ip_results:
         ip_location = vt_ip_results.get('ip_results', {}).get('country', 'Unknown')
         associated_owner = vt_ip_results.get('ip_results', {}).get('as_owner', 'Unknown')
@@ -105,24 +114,26 @@ def generate_incident_report(affected_user, affected_host_ip, sanitized_threat_a
         asn = vt_ip_results.get('ip_results', {}).get('asn', 'Unknown')
         detected_urls = vt_ip_results.get('ip_results', {}).get('detected_urls', [])
         verbose_message = vt_ip_results.get('ip_results', {}).get('verbose_msg', 'Unknown')
-
+        
+        #Sanitizes URLS with a parenthesis in the last period [ex. www.google(.)com]
         sanitized_urls = [url.get('url', 'Unknown').rsplit('.', 1)[0] + '[.]' + url.get('url', 'Unknown').rsplit('.', 1)[1] if '.' in url.get('url', 'Unknown') else url.get('url', 'Unknown') for url in detected_urls]
 
-        report += "     Security Incident Details\n"
-        report += f"        Threat Actor Details:\n"
+        report += f"        IP Address Threat Details\n"
         report += f"            Malicious IP: {sanitized_threat_actor_ip}\n"
         report += f"            Malicious IP Location: {ip_location}\n"
         report += f"            Associated Owner: {associated_owner}\n"
         report += f"            ASN (Autonomous System Number): {asn}\n"
         report += f"            Detected/Associated URLs: {', '.join(sanitized_urls)}\n\n"
 
-        report += f"        Threat credibility:\n"
+        report += f"        Threat credibility\n"
     if positive_ip_hits > 0:
         report += f"            The OSINT investigation found that {Fore.RED}{positive_ip_hits}{Style.RESET_ALL} out of {total_ip_hits}\n"
         report += f"            security vendors flag this IP address as malicious.\n"
+        report += f"            VirusTotal Message: {verbose_message}\n\n"
     else:
-        report += f"            The OSINT investigation found \033[91mno\033[0m positive hits for this IP address.\n"
-    report += f"            VirusTotal Message: {verbose_message}\n\n"
+        report += f"            Suspicious IP Address:\n"
+        report += f"            The OSINT investigation found {Fore.YELLOW}no{Style.RESET_ALL} malicious reputation for the IP address provided.\n\n"
+        
     
     # File Details (if hash is provided)
     # Initialize to 0 in the event no hash value is place or results are actually 0
@@ -135,33 +146,37 @@ def generate_incident_report(affected_user, affected_host_ip, sanitized_threat_a
         positive_hash_hits = vt_hash_results.get('hash_results', {}).get('positives', 0)
         total_hash_hits = vt_hash_results.get('hash_results', {}).get ('total', 0)
 
-        report += f"        File Details:\n"
+        report += f"        Suspicious File Details:\n"
         report += f"            File Hash: {hash_value}\n"
         report += f"            File Name: {file_name}\n"
-        report += f"            File Detection Date: {detection_date}\n"
-        report += f"        Threat credibility:\n" 
+        report += f"            File Detection Date: {detection_date}\n\n"
+        
+        report += f"        Threat credibility\n" 
     if positive_hash_hits > 0:
         report += f"            The OSINT investigation found that {Fore.RED}{positive_hash_hits}{Style.RESET_ALL} out of {total_hash_hits}\n"
         report += f"            security vendors flag this file hash as malicious.\n\n"
     else:
-        report += f"            The OSINT investigation found {Fore.RED}no{Style.RESET_ALL} positive hits for this hash value.\n\n"
+        report += f"            Suspicious File Hash:\n"
+        report += f"            The OSINT investigation found {Fore.YELLOW}no{Style.RESET_ALL} malicious reputation for the hash value provided.\n\n"
+
 
 
     # Remediation Actions
-    report += "     Remediation Actions:\n"
-    report += f"        Isolate the following affected system\n"
-    report += f"            User Name:{affected_user}\n"
-    report += f"            Host IP:{affected_host_ip}\n"
-    report += f"            Host Name:{affected_hostname}\n\n"
+    report += "     Remediation Actions\n\n"
+    report += f"         Isolate the following affected system:\n"
+    report += f"             User Name: {affected_user}\n"
+    report += f"             Host Name: {affected_hostname}\n"
+    report += f"             Host IP: {affected_host_ip}\n\n"
+    
+    if positive_ip_hits > 0:
+        report += f"         Block traffic to and from the following malicious IP address: {Fore.RED}{sanitized_threat_actor_ip}{Style.RESET_ALL}\n\n"
+    else: 
+        report += f""
+    report += f"         Conduct a thorough investigation to identify and remove any traces of the malicious file.\n\n"
 
-    report += f"        Block traffic to/from:\n"
-    report += f"            Malicious IP:{sanitized_threat_actor_ip}\n\n"
+    report += f"         Strengthen overall security measures, including endpoint protection and network monitoring.\n\n"
 
-    report += f"        Conduct a thorough investigation to identify and remove any traces of the malicious file.\n\n"
-
-    report += f"        Strengthen overall security measures, including endpoint protection and network monitoring.\n\n"
-
-    report += f"        Regularly update antivirus signatures and security patches.\n\n"
+    report += f"         Regularly update antivirus signatures and security patches.\n\n"
 
     ### full JSON IP REPORT: 
     ### report += f"    Full IP Results JSON: {vt_ip_results}\n"
@@ -188,24 +203,26 @@ def incident_response_workflow():
 
         # Validate and prompt until a valid IP is provided
         while True:
-            threat_actor_ip = input(f"{Fore.RED}Threat Actor IP{Style.RESET_ALL}: ")
+            threat_actor_ip = input(f"{Fore.YELLOW}Suspicious IP Address{Style.RESET_ALL}: ")
             if not threat_actor_ip or validate_ip(threat_actor_ip):
                 break
             else:
                 print("Invalid IP address. Please enter a valid IPv4 address.")
 
-        hash_value = input(f"{Fore.RED}Suspicious File Hash{Style.RESET_ALL}: ")
+        hash_value = input(f"{Fore.YELLOW}Suspicious File Hash{Style.RESET_ALL}: ")
 
-        # Check if Threat Actor IP is provided by the user
-        if not threat_actor_ip:
+            # Check if Threat Actor IP is provided by the user
+        if not threat_actor_ip.strip():  # Check if the input is an empty string after stripping whitespace
             print("No Threat Actor IP provided. Skipping IP query.")
             ip_results = {}
         else:
             # Query VirusTotal for IP information
             ip_results = query_virustotal_ip(threat_actor_ip, virustotal_api_key)
+            positive_ip_hits = ip_results.get('positives', 0)  # Initialize to 0 if 'positives' key is not present
 
-        # Check if Hash Value is provided by the user
-        if not hash_value:
+
+# Check if Hash Value is provided by the user
+        if not hash_value.strip():  # Check if the input is an empty string after stripping whitespace
             print("No File Hash Value provided. Skipping Hash query.")
             hash_results = {}
         else:
@@ -217,7 +234,7 @@ def incident_response_workflow():
         )
 
         # Generate incident report
-        incident_report = generate_incident_report(affected_user, affected_host_ip, sanitized_threat_actor_ip, hash_value, ip_results, hash_results, affected_hostname,)
+        incident_report = generate_incident_report(affected_user, affected_host_ip, sanitized_threat_actor_ip, hash_value, ip_results, hash_results, affected_hostname)
 
         print(incident_report)
 
