@@ -125,13 +125,13 @@ def generate_incident_report(affected_user, affected_host_ip, sanitized_threat_a
         report += f"            ASN (Autonomous System Number): {asn}\n"
         report += f"            Detected/Associated URLs: {', '.join(sanitized_urls)}\n\n"
 
-        report += f"        Threat credibility\n"
+        report += f"        Threat credibility:\n"
     if positive_ip_hits > 0:
         report += f"            The OSINT investigation found that {Fore.RED}{positive_ip_hits}{Style.RESET_ALL} out of {total_ip_hits}\n"
         report += f"            security vendors flag this IP address as malicious.\n"
         report += f"            VirusTotal Message: {verbose_message}\n\n"
     else:
-        report += f"            Suspicious IP Address:\n"
+        report += f"            Suspicious IP Address: {hash_value}\n"
         report += f"            The OSINT investigation found {Fore.YELLOW}no{Style.RESET_ALL} malicious reputation for the IP address provided.\n\n"
         
     
@@ -257,5 +257,5 @@ def main():
 
 if __name__ == "__main__":
     ### EXPOSES API KEY - USE FOR DEBUGGING/TESTING ONLY ###
-    # logging.basicConfig(level=logging.DEBUG)  
+    logging.basicConfig(level=logging.DEBUG)  
     main()
