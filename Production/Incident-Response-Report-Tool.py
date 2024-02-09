@@ -131,7 +131,7 @@ def generate_incident_report(affected_user, affected_host_ip, sanitized_threat_a
         report += f"            security vendors flag this IP address as malicious.\n"
         report += f"            VirusTotal Message: {verbose_message}\n\n"
     else:
-        report += f"            Suspicious IP Address: {hash_value}\n"
+        report += f"            Suspicious IP Address: {sanitized_threat_actor_ip}\n"
         report += f"            The OSINT investigation found {Fore.YELLOW}no{Style.RESET_ALL} malicious reputation for the IP address provided.\n\n"
         
     
