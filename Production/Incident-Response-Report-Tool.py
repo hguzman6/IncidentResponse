@@ -257,5 +257,5 @@ def main():
 
 if __name__ == "__main__":
     ### EXPOSES API KEY - USE FOR DEBUGGING/TESTING ONLY ###
-    logging.basicConfig(level=logging.DEBUG)  
+    # logging.basicConfig(level=logging.DEBUG)  
     main()
