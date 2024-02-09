@@ -110,7 +110,7 @@ Do you want to run another query? (y/n):`
 
 ## Troubleshooting
 To troubleshoot connection to VT API:
-          Scroll to the bottom of the scipt, find the function `if __name__ == "__main__":` and remove the `#` from  `logging.basicConfig(level=logging.DEBUG)`
+          Scroll to the bottom of the script, find the function `if __name__ == "__main__":` and remove the `#` from  `logging.basicConfig(level=logging.DEBUG)`
           Note: this will expose your API key via the URL it prints out. 
           
           example:
