@@ -151,7 +151,7 @@ def generate_incident_report(affected_user, affected_host_ip, sanitized_threat_a
         report += f"            File Name: {file_name}\n"
         report += f"            File Detection Date: {detection_date}\n\n"
         
-        report += f"        Threat credibility\n" 
+        report += f"        Threat credibility:\n" 
     if positive_hash_hits > 0:
         report += f"            The OSINT investigation found that {Fore.RED}{positive_hash_hits}{Style.RESET_ALL} out of {total_hash_hits}\n"
         report += f"            security vendors flag this file hash as malicious.\n\n"
