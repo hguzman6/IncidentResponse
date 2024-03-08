@@ -6,6 +6,9 @@ import logging
 from colorama import Fore, Style, init
 from dotenv import load_dotenv
 
+# Enable logging for requests
+logging.basicConfig(level=logging.DEBUG)
+
 # Initialize colorama
 init(autoreset=True)
 
@@ -48,13 +51,15 @@ def display_welcome_banner():
 *         Assisted by: ChatGPT               *
 **********************************************
 """)
+    
 # Function to query VirusTotal for IP information
 def query_virustotal_ip(query_value, virustotal_api_key):
     url = f'https://www.virustotal.com/vtapi/v2/ip-address/report'
     params = {'apikey': virustotal_api_key, 'ip': query_value}
 
+# Making a GET request to the VirusTotal API endpoint with SSL/TLS certificate verification enabled
     try:
-        response = requests.get(url, params=params)
+        response = requests.get(url, params=params, verify=True) 
         response.raise_for_status()
         result = response.json()
         return {'ip_results': result}
@@ -185,7 +190,6 @@ def generate_incident_report(affected_user, affected_host_ip, sanitized_threat_a
     return report
    
 
-
 # Function to guide the incident response workflow
 def incident_response_workflow():
     while True:
@@ -240,7 +244,6 @@ def incident_response_workflow():
 
         if input("Do you want to run another query? (y/n): ").lower() != "y":
             break
-
 
 
 def main():
